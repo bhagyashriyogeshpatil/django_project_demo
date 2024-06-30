@@ -1,3 +1,9 @@
+The deployed version of the project can be viewed [here](https://my-project-hello-world-bha-2c1348db1c59.herokuapp.com)
+
+Note: You will have to append **/hello/** or **/about/** to the browser URL just as you did locally to see your view output.
+
+Here is [Django cheat sheet](docs/Django_Cheat_Sheet.pdf) for easy reference.
+
 # Developing with Django
 
 ## Steps needed to create a simple app in Django:
@@ -189,3 +195,76 @@ Note: Don't forget the comma at the end.
 
 26. Open a browser window by returning to the terminal tab and running the Django server with the same command as you did previously, and now you can see the text Hello, world! In the browser.
 `python3 manage.py runserver`
+
+
+# Deploying to Heroku
+## Steps to Deploy our simple Hello, World Django project to Heroku.
+**Note:** These text steps assume you have a verified Heroku account and an eco dynos plan subscription through your Student Developer Pack.
+
+### Create the Heroku app:
+
+1. Navigate to your [Heroku dashboard](https://id.heroku.com/login) and create a new app with a unique name.
+
+2. Click on the Settings tab and reveal the config vars. Add a key of DISABLE_COLLECTSTATIC and a value of 1 and click Add.
+
+This step prevents Heroku from uploading static files, such as CSS and JS, during the build. 
+
+### Update your code for deployment:
+3. Install a production-ready webserver for Heroku.
+
+`pip3 install gunicorn~=20.1`
+
+Add gunicorn==20.1.0 to the requirements.txt file with:
+
+`pip3 freeze --local > requirements.txt`
+
+**Note:** gunicorn is a production equivalent of the manage.py runserver used in development but with speed and security optimisation.
+
+4. Create a file named **Procfile** at the root directory of the project (same directory as requirements.txt).
+
+**Note:** The Procfile has no file extension.
+
+5. In the Procfile, declare this is a web process followed by the command to execute your Django project.
+
+`web: gunicorn my_project.wsgi`
+This assumes your project is named my_project.
+
+Note the space after the colon.
+
+**Note:** `gunicorn my_project.wsgi` is the command heroku will use to start the server. It works similarly to `python3 manage.py runserver`.
+
+6. Open the my_project/settings.py file and replace `DEBUG=True` with `DEBUG=False`.
+
+Note the comment regarding security in production.
+
+7. Also, in **settings.py** we need to append the Heroku hostname to the `ALLOWED_HOSTS` list, in addition to the local host we added in the last lesson.
+
+`,'.herokuapp.com'`
+
+**Note:** Remember the comma and the dot before herokuapp.
+
+8. You can now git add the files you have modified, git commit them and push them to GitHub.
+
+### Deploy on Heroku
+
+9. Now, let's return to the Heroku dashboard, and in your app, click on the **Deploy** tab
+
+10. In the **Deployment method** section enable GitHub integration by clicking on **Connect to GitHub**.
+
+11. Start typing your project repo name into the search box and click **Search**. A list of repositories from your GitHub account should appear. Click on the GitHub repo you want to deploy from.
+
+12. Scroll to the bottom of the page and click **Deploy Branch** to start a manual deployment of the main branch.
+
+You can view the build output in the application's **Activity** tab in the dashboard.
+
+13. Click on **Open app** to view your deployed project.
+
+Note: You will have to append **/hello** to the browser URL just as you did locally to see your view output.
+
+14. Open the **Resources** tab and choose an eco dyno. This dyno is a lightweight container to run your project.
+
+15. Open the **Resources** tab and verify there is no existing Postgres database add-on. If there is one you can destroy it. **Hello, World** does not use a database and if not destroyed can result in usage costs. If there is a database add-on select **Delete Add-on** to remove it.
+
+16. Click on **Open app** to view your deployed project.
+
+**Note:** You will have to append **/hello** to the browser URL just as you did locally to see your view output.
