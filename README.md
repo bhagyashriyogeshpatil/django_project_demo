@@ -30,6 +30,23 @@ Important: Remember that the shortcut to refer to the current directory is a sin
 
 Note: Check in the explorer tab to see that the my_project project structure has been created.
 
+<span style="color:#6495ED"><strong>Creating a project:</strong></span>
+
+The django-admin startproject command expects to see a project name followed by a directory name. 
+
+For example:
+
+`django-admin startproject project_name directory_name`
+
+The top level in Django is a project. A project is like a container for everything we want to do. By default, the project contains a settings file and some other administrative files.
+
+Important files in our project folder:
+
+- **settings.py**: this file contains the project-wide settings, such as installed apps and database connection information, among other things.
+
+- **manage.py**: this file is in the root directory, above the project folder. It is used to create apps, run our project and perform some database operations.
+
+
 9. Return to the terminal and start the Django server with the following command:
 
 `python3 manage.py runserver`
@@ -55,6 +72,17 @@ Note: Return to the terminal and use ctrl-c to kill the server.
 
 Note: Check the explorer panel to see the new hello_world app directory has been created.
 
+<span style="color:#6495ED"><strong>Creating a project:</strong></span>
+
+Inside the project, we create apps.
+Simply put, apps are the building blocks of Django.
+
+Important files in our apps folder:
+
+- **models.py**: our database models are stored here, which define the structure of the database used by our app.
+
+- **views.py**: this file contains the view code for our app. You’ve already created some view code to display a text response to the user.
+
 ### Creating Views:
 16. In hello_world/views.py, below from django.shortcuts import render, type:
 
@@ -63,6 +91,40 @@ Note: Check the explorer panel to see the new hello_world app directory has been
 17. Below the # Create your views here. comment, create the following Python function named index. Inside the function, we are returning a simple HTTP response.
 
 18. Within parentheses after HttpResponse add the string "Hello, world!"
+
+        `# Create your views here.
+         def index(request):
+            return HttpResponse("Hello, world!")`
+
+
+
+<span style="color:#6495ED"><strong>The request & response objects:</strong></span>
+
+    `# Create your views here.
+    def index(request):
+        if request.method == "GET":
+            return HttpResponse("This was a GET request")
+        elif request.method == "POST":
+            return HttpResponse("This was a POST request")`
+
+The first argument passed into a view function represents the **HTTP request object**. By default, we call this parameter request, but you could call it anything you like.
+
+The request object is one of the ways that Django transfers the **state** throughout the system. In programming, **state** is a program or application’s temporary data at a given moment in time.
+
+A view receives data from the browser through the request object and returns it through a response object.
+
+<span style="color:#6495ED"><strong>The request object:</strong></span>
+
+The HTTP request object contains **metadata** about the request made to the browser. This includes the request method, as noted above. It also includes any form data, the URL that was called, and any files that were uploaded, among other things.
+
+The view can then use the information in the request object to complete a task, such as writing form data to the database.
+
+For a full list of the contents of the request object, you can check the [Django documentation](https://docs.djangoproject.com/en/4.2/ref/request-response/).
+
+
+<span style="color:#6495ED"><strong>The response object:</strong></span>
+
+Finally, each view must return a response object to the browser. In our simple example, we have returned a simple HttpResponse.
 
 ### Creating our URLs:
 19. In my_project/urls.py, You'll see that this urls.py file already has some content in it. That's fine, we will need that in future. Let's include the view we just created.
@@ -78,6 +140,40 @@ Here we are giving the hello_world/views.py file an alias of `index_views`. In a
 22. Above the admin pattern in urlpatterns add:
 
 `path('', index_views.index, name='index'),`
+
+<span style="color:#6495ED"><strong>Investigating URLs:</strong></span>
+
+The steps in the Django request cycle:
+- The user enters a URL to your site in their browser.
+- Django’s URL router checks to see if the URL matches any known URLs.
+- If the entered URL does not match anything in the urls.py files, then Django returns an error.
+- If it does match, then Django passes control to the view specified in the URL. In our case, the view is called index.
+- The view returns either a HttpResponse or a template. In our case, it returns a HttpResponse.
+
+<span style="color:#6495ED"><strong>Importing views:</strong></span>
+
+The first thing we need to do in our urls.py file is to import the views. We can then refer to these views in `urlpatterns`.
+
+As you can see, close to the top of urls.py, we import the views from hello_world using this line:
+
+`from hello_world import views as index_views`
+
+When we import something in Python we can use the as keyword, this creates an alias, which is how we will refer to the import from now on. In this case, we will refer to the views we imported as index_views.
+
+<span style="color:#6495ED"><strong>Importing views:</strong></span>
+
+Then, the path function takes three arguments:
+
+`path('hello/', index_views.index, name='index'),`
+
+First is the URL pattern.
+
+Then, the view to call. In our case, the index function from the views file we imported and aliased as index_views.
+
+Finally, we have a friendly name for the view.
+
+**IMPORTANT NOTE:** As shown above, you must add the trailing / to your URL patterns, otherwise they will not work.
+
 
 ### settings.py:
 23. Finally, we just need to add our app to the **settings.py** file to connect the app to the project. For our simple app, this is not strictly necessary, but it's good practice and will be required later on when app models are connecting to databases.
